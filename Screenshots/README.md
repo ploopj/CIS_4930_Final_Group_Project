@@ -1,3 +1,1 @@
-This folder will hold the screenshots of what our application will look like when it runs.
-We will also include screenshots of the Jenkins build and configuration as well as what
-our final app.py will look like
+# This folder will hold screenshots of how our project should run. We also include screenshots of the backend of our project, like app.py and the Jenkins build.
