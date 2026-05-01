@@ -1,13 +1,11 @@
 # CIS 4930 — Final project
+REPO LINK: https://github.com/ploopj/CIS_4930_Final_Group_Project
+
 - Clement Joseph
 - Roy Ibarra
 - Andy Ho
 - Sebastian Ramirez Gonzalez
 - Rex Gonzalez
-
-
-
-
 
 ## Architecture
 Flask was used for the backend of our project. Some endpoints used:
