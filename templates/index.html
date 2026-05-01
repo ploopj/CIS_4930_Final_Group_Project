@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Task Tracker</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      background: #f4f6f8;
+      color: #222;
+      padding: 32px 16px;
+      min-height: 100vh;
+    }
+
+    .container {
+      max-width: 720px;
+      margin: 0 auto;
+    }
+
+    header {
+      margin-bottom: 24px;
+    }
+
+    h1 {
+      font-size: 1.75rem;
+      margin-bottom: 4px;
+    }
+
+    .subtitle {
+      color: #666;
+      font-size: 0.9rem;
+    }
+
+    .card {
+      background: #fff;
+      border: 1px solid #e3e6ea;
+      border-radius: 8px;
+      padding: 20px;
+      margin-bottom: 20px;
+    }
+
+    h2 {
+      font-size: 1.1rem;
+      margin-bottom: 16px;
+    }
+
+    .form-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+    }
+
+    .form-grid .full {
+      grid-column: 1 / -1;
+    }
+
+    label {
+      display: block;
+      font-size: 0.85rem;
+      font-weight: 600;
+      margin-bottom: 4px;
+      color: #444;
+    }
+
+    input, textarea {
+      width: 100%;
+      padding: 8px 10px;
+      border: 1px solid #ccd1d6;
+      border-radius: 6px;
+      font-size: 0.95rem;
+      font-family: inherit;
+      background: #fff;
+    }
+
+    input:focus, textarea:focus {
+      outline: none;
+      border-color: #2563eb;
+      box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15);
+    }
+
+    textarea {
+      resize: vertical;
+      min-height: 60px;
+    }
+
+    button {
+      background: #2563eb;
+      color: #fff;
+      border: none;
+      padding: 9px 18px;
+      border-radius: 6px;
+      font-size: 0.95rem;
+      font-weight: 600;
+      cursor: pointer;
+      margin-top: 12px;
+    }
+
+    button:hover { background: #1d4ed8; }
+    button:disabled { background: #9ca3af; cursor: not-allowed; }
+
+    .message {
+      margin-top: 10px;
+      font-size: 0.85rem;
+    }
+
+    .message.error { color: #b91c1c; }
+    .message.success { color: #047857; }
+
+    .task-list {
+      list-style: none;
+    }
+
+    .task {
+      border: 1px solid #e3e6ea;
+      border-radius: 6px;
+      padding: 12px 14px;
+      margin-bottom: 10px;
+      background: #fafbfc;
+    }
+
+    .task:last-child { margin-bottom: 0; }
+
+    .task-name {
+      font-weight: 600;
+      margin-bottom: 4px;
+    }
+
+    .task-dates {
+      font-size: 0.85rem;
+      color: #555;
+      margin-bottom: 6px;
+    }
+
+    .task-notes {
+      font-size: 0.9rem;
+      color: #444;
+      white-space: pre-wrap;
+    }
+
+    .task-id {
+      float: right;
+      font-size: 0.75rem;
+      color: #888;
+    }
+
+    .empty {
+      color: #888;
+      font-style: italic;
+      font-size: 0.9rem;
+      text-align: center;
+      padding: 16px 0;
+    }
+
+    @media (max-width: 500px) {
+      .form-grid { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <h1>Task Tracker</h1>
+      <p class="subtitle">Add tasks and view the list. Tasks are stored in memory.</p>
+    </header>
+
+    <section class="card">
+      <h2>Add a Task</h2>
+      <form id="task-form">
+        <div class="form-grid">
+          <div class="full">
+            <label for="name">Name</label>
+            <input type="text" id="name" name="name" required />
+          </div>
+          <div>
+            <label for="start_date">Start Date</label>
+            <input type="date" id="start_date" name="start_date" required />
+          </div>
+          <div>
+            <label for="end_date">End Date</label>
+            <input type="date" id="end_date" name="end_date" required />
+          </div>
+          <div class="full">
+            <label for="notes">Notes (optional)</label>
+            <textarea id="notes" name="notes"></textarea>
+          </div>
+        </div>
+        <button type="submit" id="submit-btn">Add Task</button>
+        <div class="message" id="form-message"></div>
+      </form>
+    </section>
+
+    <section class="card">
+      <h2>Tasks</h2>
+      <ul class="task-list" id="task-list">
+        <li class="empty">Loading…</li>
+      </ul>
+    </section>
+  </div>
+
+  <script>
+    const form = document.getElementById('task-form');
+    const formMessage = document.getElementById('form-message');
+    const submitBtn = document.getElementById('submit-btn');
+    const taskList = document.getElementById('task-list');
+
+    async function loadTasks() {
+      try {
+        const res = await fetch('/api/tasks');
+        if (!res.ok) throw new Error('Failed to load tasks');
+        const tasks = await res.json();
+        renderTasks(tasks);
+      } catch (err) {
+        taskList.innerHTML = '<li class="empty">Could not load tasks.</li>';
+      }
+    }
+
+    function escapeHtml(str) {
+      return String(str)
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#39;');
+    }
+
+    function renderTasks(tasks) {
+      if (!tasks.length) {
+        taskList.innerHTML = '<li class="empty">No tasks yet. Add one above.</li>';
+        return;
+      }
+      taskList.innerHTML = tasks.map(t => `
+        <li class="task">
+          <span class="task-id">#${t.id}</span>
+          <div class="task-name">${escapeHtml(t.name)}</div>
+          <div class="task-dates">${escapeHtml(t.start_date)} → ${escapeHtml(t.end_date)}</div>
+          ${t.notes ? `<div class="task-notes">${escapeHtml(t.notes)}</div>` : ''}
+        </li>
+      `).join('');
+    }
+
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      formMessage.textContent = '';
+      formMessage.className = 'message';
+      submitBtn.disabled = true;
+
+      const payload = {
+        name: form.name.value.trim(),
+        start_date: form.start_date.value,
+        end_date: form.end_date.value,
+        notes: form.notes.value.trim()
+      };
+
+      try {
+        const res = await fetch('/api/tasks', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload)
+        });
+        const data = await res.json();
+        if (!res.ok) {
+          formMessage.textContent = data.error || 'Something went wrong.';
+          formMessage.className = 'message error';
+        } else {
+          formMessage.textContent = 'Task added.';
+          formMessage.className = 'message success';
+          form.reset();
+          loadTasks();
+        }
+      } catch (err) {
+        formMessage.textContent = 'Network error.';
+        formMessage.className = 'message error';
+      } finally {
+        submitBtn.disabled = false;
+      }
+    });
+
+    loadTasks();
+  </script>
+</body>
+</html>
