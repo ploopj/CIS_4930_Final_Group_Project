@@ -44,3 +44,23 @@ Example POST:
 ```text
 curl -X POST http://127.0.0.1:5000/api/tasks -H "Content-Type: application/json" -d "{\"name\":\"Demo\",\"start_date\":\"2026-05-01\",\"end_date\":\"2026-05-15\",\"notes\":\"hello\"}"
 ```
+
+## Screenshots
+### Jenkins Home Page
+![Jenkins Home Page](Screenshots/jenkins-home.png)
+Jenkins home page that lists our project.
+
+
+### Jenkins Build Page
+![Jenkins Build Page](Screenshots/jenkins-build.png)
+Our Jenkins configuration is successfully running with our Jenkinsfile setup.
+
+### Skeleton Page
+![Pretty Print](Screenshots/pretty-print.png)
+This was our skeleton website that ran with all of our files. We will build off of this
+
+### Task Tracker Project
+![Pretty Print](Screenshots/task-tracker.png)
+This is our finalized project. It is a simple task tracker that lets you create a list of 
+tasks to stay organized. Jenkins automates the process of running our code with the help of 
+Docker.
