@@ -55,6 +55,7 @@ Our Jenkins configuration is successfully running with our Jenkinsfile setup.
 
 ### Skeleton Page
 ![Pretty Print](Screenshots/pretty-print.png)
+
 This was our skeleton website that ran with all of our files. We will build off of this
 
 ### Task Tracker Project
