@@ -1,6 +1,12 @@
 # CIS 4930 — Final project
 
-Flask app for tasks (name, start/end dates, notes). Tasks are stored in memory only, so they disappear when the server restarts.
+
+
+
+
+
+## Architecture
+Flask was used for the backend of our project. Some endpoints used:
 
 **API**
 
@@ -12,39 +18,31 @@ Bad requests get status `400` and `{"error":"..."}`.
 
 Dates are plain strings (ISO-style is fine, e.g. `2026-05-01`).
 
-**Run (venv)**
 
-```text
-python -m venv .venv
-.venv\Scripts\activate
-pip install -r requirements.txt
-flask --app app run --debug
-```
+HTML/CSS/JS was used for our frontend, and the code in the frontend connected to app.py.
 
-**Run (Docker)**
+## Tools used
+- Git/GitHub
+- Docker/Docker compose
+- Jenkins
+- Flask app for tasks (name, start/end dates, notes). Tasks are stored in memory only, so they disappear when the server restarts.
+## Setup 
+Jenkins was downloaded and tested on all group members' machines. We created a new item and used a pipeline to connect to this repository.
+Once Jenkins is fully linked with our repository, it is now ready to automate the workflow of our project. Once Jenkins runs our project, we can access it 
+with http://localhost:5000
 
-```text
-docker compose build
-docker compose up -d
-```
+## Workflow
+1. **Trigger** — A Jenkins build starts the pipeline.
 
-Stop: `docker compose down`.
+2. **Checkout** — Jenkins copies the repository into the workspace.
 
-If `docker compose` isn’t available, try `docker-compose`.
+3. **Build** — `docker compose build` uses the `Dockerfile` to install dependencies and produce a container image of the application.
 
-**Quick checks**
+4. **Deploy** — `docker compose up -d` runs the container in the background and maps host port **5000** to the app.
 
-```text
-curl http://127.0.0.1:5000/health
-curl http://127.0.0.1:5000/api/tasks
-```
+5. **Verify** — After a short wait, the pipeline requests `http://localhost:5000/`. A successful response passes the build; a failure fails the build.
 
-Example POST:
-
-```text
-curl -X POST http://127.0.0.1:5000/api/tasks -H "Content-Type: application/json" -d "{\"name\":\"Demo\",\"start_date\":\"2026-05-01\",\"end_date\":\"2026-05-15\",\"notes\":\"hello\"}"
-```
-
+**Summary:** The pipeline automates *checkout → build image → run container → smoke test* so each change is built and checked the same way.
 ## Screenshots
 ### Jenkins Home Page
 ![Jenkins Home Page](Screenshots/jenkins-home.png)
