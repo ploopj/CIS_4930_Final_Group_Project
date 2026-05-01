@@ -1,5 +1,9 @@
 # CIS 4930 — Final project
-
+- Clement Joseph
+- Roy Ibarra
+- Andy Ho
+- Sebastian Ramirez Gonzalez
+- Rex Gonzalez
 
 
 
