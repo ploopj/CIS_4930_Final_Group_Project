@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from flask import Flask, jsonify, request
+from flask import Flask, jsonify, render_template, request
 
 app = Flask(__name__)
 
@@ -24,9 +24,14 @@ def _validate_payload(data: dict) -> tuple[bool, str]:
         return False, "end_date is required"
     return True, ""
 
-#check the endpoints
+#serve the frontend
 @app.get("/")
-def root():
+def index():
+    return render_template("index.html")
+
+#api info (was previously at /)
+@app.get("/api")
+def api_info():
     return jsonify(
         service="task-tracker",
         health="/health",
