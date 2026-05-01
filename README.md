@@ -1,5 +1,6 @@
 # CIS 4930 — Final project
-REPO LINK: https://github.com/ploopj/CIS_4930_Final_Group_Project
+REPO LINK: [CIS_4930_Final_Group_Project](https://github.com/ploopj/CIS_4930_Final_Group_Project
+)
 
 - Clement Joseph
 - Roy Ibarra
